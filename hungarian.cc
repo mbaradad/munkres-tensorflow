@@ -579,19 +579,15 @@ REGISTER_OP("Hungarian")
     //TODO: add shape function
     .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
       //Same shape as input, droping last dimension, as an index is returned for each assignment
-        std::cout << "Executing shape fn";
-
         const Shape* input = c->input(0);
 
         if (!c->RankKnown(input)) {
-          std::cout << "Rank unknonwn";
           // If we do not have the rank of the input, we don't know the output shape.
           c->set_output(0, c->UnknownShape());
           return Status::OK();
         }
 
         const int32 input_rank = c->Rank(input);
-        std::cout << "Rank" << input_rank;
         std::vector<const Dimension*> dims;
 
         for (int i = 0; i < input_rank - 1; ++i) {
@@ -628,10 +624,8 @@ class HungarianOp : public OpKernel {
       vector<float> match_cost;
       for (int i = 0; i < pred_shape[1]; ++i) {
         for (int j = 0; j < pred_shape[1]; ++j) {
-          std::cout << costs(n, i, j) << ' ';
           match_cost.push_back(costs(n, i, j));
         }
-        std::cout << std::endl;
       }
       vector<int> assignment = get_assignment(match_cost, pred_shape[1]);
       for (int i = 0; i < pred_shape[1]; ++i) {
@@ -660,22 +654,14 @@ class HungarianOp : public OpKernel {
     std::vector<int> assignment;
     hungarian_problem_t p;
     int** m = array_to_matrix(int_cost, num_pred, num_pred);
-    for (int i = 0; i < num_pred; ++i) {
-      for (int j = 0; j < num_pred; ++j) {
-        std::cout << m[i][j] << ' ';
-      }
-      std::cout << std::endl;
-    }
     hungarian_init(&p, m, num_pred, num_pred, HUNGARIAN_MODE_MINIMIZE_COST);
     hungarian_solve(&p);
     for (int i = 0; i < num_pred; ++i) {
       for (int j = 0; j < num_pred; ++j) {
-        std::cout << p.assignment [i][j] << ' ';
         if (p.assignment[i][j] == HUNGARIAN_ASSIGNED) {
           assignment.push_back(j);
         }
       }
-      std::cout << std::endl;
     }
     CHECK_EQ(assignment.size(), num_pred);
     hungarian_free(&p);
