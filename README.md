@@ -1,5 +1,5 @@
 # munkres-tensorflow
-Port of C++ munkres to tensorflow interface 
+Port of Munkres C++ implementation to tensorflow interface 
 ## Functionality
 This is a port from libhungarian by _Cyrill Stachniss_, based on a previous port by Russell91 https://github.com/Russell91/TensorBox/blob/master/utils/hungarian/hungarian.cc.
 
