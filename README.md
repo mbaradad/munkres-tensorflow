@@ -5,18 +5,18 @@ This is a port from libhungarian by _Cyrill Stachniss_, based on a previous port
 
 This version allows an arbitrary cost matrix (MxM, squared for the moment) as input, and outputs a vector of M elements, corresponding to the perfect bipartite matching that minimizes the sumatory of the selected elements. 
 
-## Use
+## Usage
 Follow the steps in https://www.tensorflow.org/versions/r0.10/how_tos/adding_an_op/index.html to use user defined functions. 
 For tensorflow binary installation, it consists in:
 
-1. Compiling the function
+1-Compiling the function
 ```bash
 
 TF_INC=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())')
 g++ -std=c++11 -shared hungarian.cc -o hungarian.so -fPIC -I $TF_INC
 ```
 
-2. Loading the function when building the graph (for other methods, refer to link above)
+1-Loading the function when building the graph (for other methods, refer to link above)
 ```python
 
 import tensorflow as tf
