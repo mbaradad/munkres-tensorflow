@@ -23,13 +23,12 @@ g++ -std=c++11 -shared hungarian.cc -o hungarian.so -fPIC -I $TF_INC
 ```python
 
 import tensorflow as tf
-zero_out_module = tf.load_op_library('zero_out.so')
+hungarian_module = tf.load_op_library('./hungarian.so')
 with tf.Session(''):
-  zero_out_module.zero_out([[1, 2], [3, 4]]).eval()
+  print hungarian_module.hungarian([[[1, 2], [3, 4]]]).eval()
 
-# Prints
-array([[1, 0],
-       [0, 0]], dtype=int32)
+#Prints
+[[0 1]]
 ```
 
 ## TODO's
