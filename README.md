@@ -1,9 +1,12 @@
 # munkres-tensorflow
-Port of Munkres C++ implementation to tensorflow interface 
+Port of Hungarian method/Munkres algorithm C++ implementation to tensorflow interface 
 ## Functionality
 This is a port from libhungarian by _Cyrill Stachniss_, based on a previous port by Russell91 https://github.com/Russell91/TensorBox/blob/master/utils/hungarian/hungarian.cc.
 
 This version allows an arbitrary cost matrix (MxM, squared for the moment) as input, and outputs a vector of M elements, corresponding to the perfect bipartite matching that minimizes the sumatory of the selected elements. 
+
+The input tensor should be of rank 3, with dimensions [batch_size, M, M], where each element is a cost matrix.
+The output tensor will be of rank 2, with dimensions [batch_size, M], corresponding to the  assignment.
 
 ## Usage
 Follow the steps in https://www.tensorflow.org/versions/r0.10/how_tos/adding_an_op/index.html to use user defined functions. 
