@@ -65,12 +65,6 @@ class HungarianOp : public OpKernel {
           matrix(i,j) =  costs(n, i, j);
         }
       }
-      for (int i = 0; i < cost_shape[1]; ++i) {
-        for (int j = 0; j < cost_shape[2]; ++j) {
-          std::cout << matrix(i,j) << " ";
-        }
-        std::cout << std::endl;
-      }
       Munkres<float> munk = Munkres<float>();
       munk.solve(matrix);
 

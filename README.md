@@ -30,6 +30,12 @@ with tf.Session(''):
 #Prints
 [[0 1]]
 ```
+## Testing
+```bash
+cd test
+python -m unittest discover
+
+```
 
 ## TODO's
 1. Add shape inference
