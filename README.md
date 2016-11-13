@@ -1,12 +1,12 @@
 # munkres-tensorflow
 Port of Hungarian method/Munkres algorithm C++ implementation to tensorflow interface 
 ## Functionality
-This is a port from libhungarian by _Cyrill Stachniss_, based on a previous port by Russell91 https://github.com/Russell91/TensorBox/blob/master/utils/hungarian/hungarian.cc.
+This is a port https://github.com/saebyn/munkres-cpp to Tensorflow interface.
 
-This version allows an arbitrary cost matrix (MxM, squared for the moment) as input, and outputs a vector of M elements, corresponding to the perfect bipartite matching that minimizes the sumatory of the selected elements. 
+This version allows K arbitrary cost matrices (NxM) as input, and outputs a K vectors of N elements, corresponding to the perfect bipartite matching that minimizes the sumatory of the selected elements. 
 
-The input tensor should be of rank 3, with dimensions [batch_size, M, M], where each element is a cost matrix.
-The output tensor will be of rank 2, with dimensions [batch_size, M], corresponding to the  assignment.
+The input tensor should be of rank 3, with dimensions [batch_size, N, M], where each element is a cost matrix. Note that all cost matrices should have the same size.
+The output tensor will be of rank 2, with dimensions [batch_size, N], corresponding to the  assignment.
 
 ## Usage
 Follow the steps in https://www.tensorflow.org/versions/r0.10/how_tos/adding_an_op/index.html to use user defined functions. 
@@ -32,5 +32,5 @@ with tf.Session(''):
 ```
 
 ## TODO's
-1. Add comptibility for rectangular cost matrix
-2. Add shape inference
+1. Add shape inference
+2. Improve testing, and test batches bigger than 1.
