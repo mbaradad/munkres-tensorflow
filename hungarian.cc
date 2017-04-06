@@ -9,7 +9,8 @@ using std::vector;
 using namespace tensorflow;
 using shape_inference::Shape;
 using shape_inference::Dimension;
-
+using shape_inference::DimensionHandle;
+using shape_inference::ShapeHandle;
 
 REGISTER_OP("Hungarian")
     .Input("cost_matrix: float32")
@@ -17,7 +18,7 @@ REGISTER_OP("Hungarian")
     //TODO: add shape function
     .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
       //Same shape as input, droping last dimension, as an index is returned for each assignment
-        const Shape* input = c->input(0);
+        ShapeHandle input = c->input(0);
 
         if (!c->RankKnown(input)) {
           // If we do not have the rank of the input, we don't know the output shape.
@@ -26,7 +27,7 @@ REGISTER_OP("Hungarian")
         }
 
         const int32 input_rank = c->Rank(input);
-        std::vector<const Dimension*> dims;
+        std::vector< DimensionHandle> dims;
 
         for (int i = 0; i < input_rank - 1; ++i) {
             dims.emplace_back(c->Dim(input, i));
