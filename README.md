@@ -1,5 +1,5 @@
 # munkres-tensorflow
-Port of Hungarian method/Munkres algorithm C++ implementation to tensorflow interface 
+Port of Hungarian method/Munkres algorithm C++ implementation to tensorflow 1.0 interface 
 ## Functionality
 This is a port of https://github.com/saebyn/munkres-cpp to Tensorflow interface.
 
