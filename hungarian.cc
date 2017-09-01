@@ -2,6 +2,7 @@
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/shape_inference.h"
+#include "tensorflow/core/util/work_sharder.h"
 #include <iostream>
 #include "munkres.h"
 
@@ -59,27 +60,36 @@ class HungarianOp : public OpKernel {
     auto assignments_output = assignments_tensor->matrix<int>();
 
     const int batch_size = cost_shape[0];
-    Matrix<float> matrix(cost_shape[1], cost_shape[2]);
-    for (int n = 0; n < batch_size; ++n) {
-      for (int i = 0; i < cost_shape[1]; ++i) {
-        for (int j = 0; j < cost_shape[2]; ++j) {
-          matrix(i,j) =  costs(n, i, j);
-        }
-      }
-      Munkres<float> munk = Munkres<float>();
-      munk.solve(matrix);
-
-      for (int i = 0; i < cost_shape[1]; ++i) {
-        bool assigned = false;
-        for (int j = 0; j < cost_shape[2]; ++j){
-          if(matrix(i,j) == 0){
-            assigned = true;
-            assignments_output(n, i) = j;
+    auto shard = [&costs, &cost_shape, &assignments_output](int64 start, int64 limit) {
+      for (int n = start; n < limit; ++n) {
+        Matrix<float> matrix(cost_shape[1], cost_shape[2]);
+        for (int i = 0; i < cost_shape[1]; ++i) {
+          for (int j = 0; j < cost_shape[2]; ++j) {
+            matrix(i,j) =  costs(n, i, j);
           }
-          if(!assigned) assignments_output(n, i) = -1;
+        }
+        Munkres<float> munk = Munkres<float>();
+        munk.solve(matrix);
+
+        for (int i = 0; i < cost_shape[1]; ++i) {
+          bool assigned = false;
+          for (int j = 0; j < cost_shape[2]; ++j){
+            if(matrix(i,j) == 0){
+              assigned = true;
+              assignments_output(n, i) = j;
+            }
+            if(!assigned) assignments_output(n, i) = -1;
+          }
         }
       }
-    }
+    };
+
+    // This is just a very crude approximation
+    const int64 single_cost = 10000 * cost_shape[1] * cost_shape[1] * cost_shape[2];
+
+    auto worker_threads = context->device()->tensorflow_cpu_worker_threads();
+    Shard(worker_threads->num_threads, worker_threads->workers, batch_size, single_cost, shard);
+    shard(0, batch_size);
   }
 };
 
