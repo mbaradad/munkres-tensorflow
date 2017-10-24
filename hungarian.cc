@@ -89,7 +89,6 @@ class HungarianOp : public OpKernel {
 
     auto worker_threads = context->device()->tensorflow_cpu_worker_threads();
     Shard(worker_threads->num_threads, worker_threads->workers, batch_size, single_cost, shard);
-    shard(0, batch_size);
   }
 };
 
